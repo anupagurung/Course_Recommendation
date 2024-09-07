@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Recommendation System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Recommended Courses for You</h1>
+    </header>
+    
+    <div class="container">
+        <div class="course-card" data-course-title="Introduction to Programming">
+            <img src="course1.jpg" alt="Course 1">
+            <h2>Introduction to Programming</h2>
+            <p>Learn the basics of programming with this introductory course.</p>
+            <button onclick="enrollNow(this)">Enroll Now</button>
+        </div>
+
+        <div class="course-card" data-course-title="Data Science Essentials">
+            <img src="course2.jpg" alt="Course 2">
+            <h2>Data Science Essentials</h2>
+            <p>Master the essentials of data science with hands-on exercises.</p>
+            <button onclick="enrollNow(this)">Enroll Now</button>
+        </div>
+
+        <div class="course-card" data-course-title="Machine Learning Basics">
+            <img src="course3.jpg" alt="Course 3">
+            <h2>Machine Learning Basics</h2>
+            <p>Get started with machine learning algorithms and techniques.</p>
+            <button onclick="enrollNow(this)">Enroll Now</button>
+        </div>
+    </div>
+
+    <div id="recommendations">
+        <h2>Recommended Courses:</h2>
+        <ul id="recommendation-list"></ul>
+    </div>
+
+    <script>
+        function enrollNow(button) {
+            const courseTitle = button.parentElement.getAttribute('data-course-title');
+            
+            // Send POST request to the backend
+            fetch('/recommend', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ course_title: courseTitle })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const recommendationList = document.getElementById('recommendation-list');
+                recommendationList.innerHTML = '';  // Clear existing list
+                
+                // Display recommendations
+                if (data.length > 0) {
+                    data.forEach(course => {
+                        const listItem = document.createElement('li');
+                        listItem.textContent = course;
+                        recommendationList.appendChild(listItem);
+                    });
+                } else {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = "No similar courses found.";
+                    recommendationList.appendChild(listItem);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
